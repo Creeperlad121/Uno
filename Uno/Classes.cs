@@ -14,6 +14,7 @@ namespace Uno
         public static List<List<string>> playerhand = [[]];
         public static List<int> winner = [];
         public static int numberofplayers;
+        public static bool aiplayer;
         public static bool reverse = false;
         public static bool skip = false;
 
@@ -43,8 +44,16 @@ namespace Uno
                 string[] parts = draw.Split(',');
                 if (parts[0] == ccparts[0] || parts[1] == "Wild" || parts[1] == ccparts[1] || parts[1] == "Wild +4")
                 {
-                    Console.WriteLine("\nDo you want to play it? Y or N");
-                    string input = Console.ReadLine().ToLower();
+                    string input = "";
+                    if (!aiplayer)
+                    {
+                        Console.WriteLine("\nDo you want to play it? Y or N");
+                        input = Console.ReadLine().ToLower();
+                    }
+                    else
+                    {
+                        input = "y";
+                    }
                     switch (input)
                     {
                         case "y":
@@ -136,8 +145,18 @@ namespace Uno
             bool accept = false;
             while (accept == false)
             {
-                Console.WriteLine("\n\nWhich Action you play?");
-                string input = Console.ReadLine();
+                string input = "";
+                if (aiplayer)
+                {
+                    if (useablecards.Count == 0) { input = "0"; }
+                    else
+                        input = random.Next(useablecards.Count - 1) + 1.ToString();
+                }
+                else
+                {
+                    Console.WriteLine("\n\nWhich Action you play?");
+                    input = Console.ReadLine();
+                }
                 if (int.TryParse(input, out int whichcard))
                 {
                     if (whichcard < 0 || whichcard > useablecards.Count)
@@ -212,7 +231,7 @@ namespace Uno
                 Console.WriteLine("Turn Skipped");
                 skip = false;
                 currentcard = $"{ccparts[0]},{ccparts[1]},{ccparts[2]}";
-                Console.ReadKey();
+                if (!aiplayer) Console.ReadKey();
                 return;
             }
             if (int.Parse(ccparts[2]) > 0) { Console.WriteLine($"Current Draw cards = {int.Parse(ccparts[2])}"); }
@@ -222,8 +241,16 @@ namespace Uno
 
         public static string PickColor()
         {
-            Console.WriteLine("Select a color\n1: Red\n2: Yellow\n3: Green\n4: Blue");
-            string input = Console.ReadLine();
+            string input = "";
+            if (!aiplayer)
+            {
+                Console.WriteLine("Select a color\n1: Red\n2: Yellow\n3: Green\n4: Blue");
+                input = Console.ReadLine();
+            }
+            else
+            {
+                input = random.Next(1, 5).ToString();
+            }
             if (int.TryParse(input, out int color))
             {
                 string output = $"{color - 1}";
